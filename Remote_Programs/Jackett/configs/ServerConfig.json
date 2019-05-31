@@ -1,0 +1,18 @@
+{
+  "Port": PORT,
+  "AllowExternal": true,
+  "APIKey": "",
+  "AdminPassword": null,
+  "InstanceId": "",
+  "BlackholeDir": null,
+  "UpdateDisabled": false,
+  "UpdatePrerelease": false,
+  "BasePathOverride": PATH,
+  "OmdbApiKey": "",
+  "ProxyUrl": "",
+  "ProxyType": 0,
+  "ProxyPort": null,
+  "ProxyUsername": "",
+  "ProxyPassword": "",
+  "ProxyIsAnonymous": true
+}

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# OpenSSH_7.8p1-hpn14v15, OpenSSL 1.1.0f  25 May 2017
+#
+publickeyurl=""
+port=""
+#
+opensshv="hpn-openssl1.1-7_8_P1.tar.gz"
+opensshdir="openssh-portable-hpn-openssl1.1-7_8_P1"
+opensshurl="https://github.com/rapier1/openssh-portable/archive/hpn-openssl1.1-7_8_P1.tar.gz"
+#
+# Download openssh
+wget -qO ~/"$opensshv" "$opensshurl"
+#
+# Unpack openssh.
+tar xf ~/"$opensshv"
+#
+cd ~/"$opensshdir"
+#
+# Install patched openssh
+autoreconf
+./configure --prefix="$HOME" --with-privsep-user="$(whoami)" --with-privsep-path="/root" --with-pid-dir="$HOME" --with-default-path="$HOME/bin" --sysconfdir="$HOME/etc/ssh"
+make
+make install
+# set port
+sed -ri 's/#?Port (.*)/Port '"$port"'/g' ~/etc/ssh/sshd_config
+# set public key
+wget -qO - "$publickeyurl" | cat - >> ~/.ssh/authorized_keys
+# configuration
+ln -s /usr/bin/id "$HOME"/bin/id
+sed -i 's/#Protocol 2/Protocol 2/g' ~/etc/ssh/sshd_config
+sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' ~/etc/ssh/sshd_config
+sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' ~/etc/ssh/sshd_config
+sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/g' ~/etc/ssh/sshd_config
+#
+cd
+rm -f "$opensshv"
+rm -rf "$opensshdir"
+#
+~/sbin/./sshd
+#
+exit
