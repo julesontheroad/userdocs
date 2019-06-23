@@ -29,9 +29,8 @@ The below commands can be copy and pasted in one go and will download, install a
 You could also use them to update filebrowser without effecting your existing setup as the database file is untouched.
 
 ~~~bash
-mkdir -p ~/.config/filebrowser
-wget -qO ~/.config/filebrowser/filebrowser.json https://git.io/fxQGc
-wget -qO ~/filebrowser.tar.gz $(curl -sNL https://git.io/fxQ38 | grep -P 'browser(.*)linux-amd64-filebrowser.tar.gz' | cut -d\" -f4)
+mkdir -p ~/{bin,.config/filebrowser}
+wget -qO ~/filebrowser.tar.gz "$(curl -sNL https://git.io/fxQ38 | grep -Po 'ht(.*)linux-amd64(.*)gz')"
 tar xf ~/filebrowser.tar.gz --exclude LICENSE --exclude README.md -C ~/bin
 #
 # Proxypass
@@ -42,21 +41,19 @@ sed -i 's|generic|filebrowser|g' ~/.nginx/conf.d/000-default-server.d/filebrowse
 sed -i 's|username|'"$(whoami)"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser.conf
 #
 # Port Generation
-appport="$(shuf -i 10001-32001 -n 1)" && while [[ "$(ss -ln | grep -co ''"$appport"'')" -ge "1" ]]; do appport="$(shuf -i 10001-32001 -n 1)"; done
+app_port="$(shuf -i 10001-32001 -n 1)" && while [[ "$(ss -ln | grep -co ''"$appport"'')" -ge "1" ]]; do app_port="$(shuf -i 10001-32001 -n 1)"; done
 sed -i 's|PORT|'"$appport"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser.conf
-sed -i 's|PORT|'"$appport"'|g' ~/.config/filebrowser/filebrowser.json
 #
 # Configuration
-sed -i "s|BASEURL|/$(whoami)/filebrowser|g" ~/.config/filebrowser/filebrowser.json
-sed -i "s|CONFIG|$HOME/.config/filebrowser/filebrowser.db|g" ~/.config/filebrowser/filebrowser.json
-sed -i "s|LOG|$HOME/.config/filebrowser/filebrowser.log|g" ~/.config/filebrowser/filebrowser.json
-sed -i "s|SCOPE|$HOME|g" ~/.config/filebrowser/filebrowser.json
+filebrowser config init -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
+filebrowser config set -a 0.0.0.0 -p $app_port -b "/$(whoami)/filebrowser" -l ~/.config/filebrowser/filebrowser.log -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
+filebrowser users add admin admin --perm.admin -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
 #
 # Reload nginx - ignore the errors
 /usr/sbin/nginx -s reload -c ~/.nginx/nginx.conf 2> /dev/null
 #
 # Start the program in a screen called filebrowser
-screen -dmS "filebrowser" && screen -S "filebrowser" -p 0 -X stuff "filebrowser -c $HOME/.config/filebrowser/filebrowser.json^M"
+screen -dmS "filebrowser" && screen -S "filebrowser" -p 0 -X stuff "filebrowser -d $HOME/.config/filebrowser/filebrowser.db^M"
 #
 echo "Just an echo to return our prompt if you copied and pasted all these commands"
 ~~~
