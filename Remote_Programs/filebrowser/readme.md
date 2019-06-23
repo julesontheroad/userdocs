@@ -41,8 +41,8 @@ sed -i 's|generic|filebrowser|g' ~/.nginx/conf.d/000-default-server.d/filebrowse
 sed -i 's|username|'"$(whoami)"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser.conf
 #
 # Port Generation
-app_port="$(shuf -i 10001-32001 -n 1)" && while [[ "$(ss -ln | grep -co ''"$appport"'')" -ge "1" ]]; do app_port="$(shuf -i 10001-32001 -n 1)"; done
-sed -i 's|PORT|'"$appport"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser.conf
+app_port="$(shuf -i 10001-32001 -n 1)" && while [[ "$(ss -ln | grep -co ''"$app_port"'')" -ge "1" ]]; do app_port="$(shuf -i 10001-32001 -n 1)"; done
+sed -i 's|PORT|'"$app_port"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser.conf
 #
 # Configuration
 filebrowser config init -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
