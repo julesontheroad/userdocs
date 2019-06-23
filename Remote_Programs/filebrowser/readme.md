@@ -14,19 +14,17 @@ You can create separate configured users that are limited to a specific folder a
 
 The binary is installed to and run from the `~/bin`.
 
-We point the binary to configuration file in `~/.config/filebrowser` using `-c` ( but this is optional as you can do all this via the command switches directly )
+We point the binary to a configuration database `~/.config/filebrowser/filebrowser.db` using `-d`
 
 We proxypass it using nginx to be available by https only.
 
 We start filebrowser in a screen called `filebrowser` using the custom configuration file.
 
-You will have will be able to access the progam via http://servername.feralhosting.com/username/filebrowser to login as admin
+You will have will be able to access the progam via `http://servername.feralhosting.com/username/filebrowser` to login as admin
 
 The default username is `admin` and the default password is `admin` ( you should change this in the settings/profile section )
 
 The below commands can be copy and pasted in one go and will download, install and configure filebrowser with nginx on Feralhosting. The commands can be tweaked to work with other providers.
-
-You could also use them to update filebrowser without effecting your existing setup as the database file is untouched.
 
 ~~~bash
 mkdir -p ~/{bin,.config/filebrowser}
@@ -46,7 +44,7 @@ sed -i 's|PORT|'"$app_port"'|g' ~/.nginx/conf.d/000-default-server.d/filebrowser
 #
 # Configuration
 filebrowser config init -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
-filebrowser config set -a 0.0.0.0 -p $app_port -b "/$(whoami)/filebrowser" -l ~/.config/filebrowser/filebrowser.log -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
+filebrowser config set -a 10.0.0.1 -p $app_port -b "/$(whoami)/filebrowser" -l ~/.config/filebrowser/filebrowser.log -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
 filebrowser users add admin admin --perm.admin -d ~/.config/filebrowser/filebrowser.db > /dev/null 2>&1
 #
 # Reload nginx - ignore the errors
